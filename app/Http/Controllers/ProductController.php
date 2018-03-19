@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use App\ProductInout;
-
+use Illuminate\Support\Facades\DB;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -21,13 +22,19 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $cond = $request->input('cond', array());
+        $cond = array_merge(array(
+            'shop' => array(), 
+            'code' => array(),
+            'name' => array(),
+            'channel' => array(),
+            'spec_size' => array(),
+        ), $cond);
         if(!empty($cond)){
             $whereStr = array();
             $whereParams = array();
-            foreach($cond as $k => $v){
-                if(!empty($v)){
-                    $whereStr[] = "(product.{$k} LIKE ?)";
-                    $whereParams[] = "%{$v}%";
+            foreach($cond as $k => $values){
+                if(!empty($values)){
+                    $whereStr[] = "(product.{$k} IN ('". implode("', '", $values) ."') )";
                 }
             }
             $whereStr = implode(' and ', $whereStr);
@@ -36,7 +43,7 @@ class ProductController extends Controller
             $products = \App\Product::orderBy('createtime', 'desc')->get();
         }else{
             $products = \App\Product::orderBy('createtime', 'desc')
-            ->whereRaw($whereStr, $whereParams)
+            ->whereRaw($whereStr)
             ->get();
         }
         
@@ -49,7 +56,16 @@ class ProductController extends Controller
         
         return view('product/index', [
             'productsChunk' => $productsChunk, 
-            'cond' => $cond
+            'cond' => $cond, 
+
+            'cond_auto_shops' => DB::table('product')->select('shop')->distinct('shop')->pluck('shop'),
+            'cond_auto_codes' => DB::table('product')->select('code')->distinct('code')->pluck('code'), 
+            'cond_auto_names' => DB::table('product')->select('name')->distinct('name')->pluck('name'),  
+            'cond_auto_channels' => array(
+                \App\Product::CHANNEL_DEFAULT => '默认',
+                \App\Product::CHANNEL_PROXY => '代销'
+            ), 
+            'cond_auto_spec_sizes' => DB::table('product')->select('spec_size')->distinct('spec_size')->pluck('spec_size'),
         ]);
     }
     
@@ -75,20 +91,23 @@ class ProductController extends Controller
     public function inoutp(Request $request)
     {
         $cond = $request->input('cond', array());
+        $cond = array_merge(array(
+            'type' => array(), 
+            'shop' => array(), 
+            'code' => array(),
+            'name' => array(),
+            'channel' => array(),
+            'spec_size' => array(),
+        ), $cond);
         if(!empty($cond)){
             $whereStr = array();
             $whereParams = array();
-            foreach($cond as $k => $v){
-                if(!empty($v)){
+            foreach($cond as $k => $values){
+                if(!empty($values)){
                     if(in_array($k, array('type'))){
-                        $whereStr[] = "(product_inout.{$k} = ?)";
-                        $whereParams[] = $v;
-                    }elseif(in_array($k, array('spec_size'))){
-                        $whereStr[] = "(product.{$k} = ?)";
-                        $whereParams[] = $v;
+                        $whereStr[] = "(product_inout.{$k} IN ('". implode("', '", $values) ."') )";
                     }else{
-                        $whereStr[] = "(product.{$k} LIKE ?)";
-                        $whereParams[] = "%{$v}%";
+                        $whereStr[] = "(product.{$k} IN ('". implode("', '", $values) ."') )";
                     }
                 }
             }
@@ -113,7 +132,26 @@ class ProductController extends Controller
         
         return view('product/inoutp', [
             'productInoutsChunk' => $productInoutsChunk, 
-            'cond' => $cond
+            'cond' => $cond, 
+
+            'cond_auto_types' => array(
+                \App\ProductInout::TYPE_REPO_IMPORT_FROM_HUAYING => '华蓥调入',
+                \App\ProductInout::TYPE_REPO_IMPORT_FROM_LINGSHUI => '邻水调入',
+                \App\ProductInout::TYPE_REPO_IMPORT_FROM_CMP => '公司调入',
+                \App\ProductInout::TYPE_REPO_EXPORT_TO_HUAYING => '调出至华蓥',
+                \App\ProductInout::TYPE_REPO_EXPORT_TO_LINGSHUI => '调出至邻水',
+                \App\ProductInout::TYPE_REPO_EXPORT_TO_CMP => '调出至公司',
+                \App\ProductInout::TYPE_REFUND => '客户退货',
+                \App\ProductInout::TYPE_SALEOUT => '销售出货'
+            ),
+            'cond_auto_shops' => DB::table('product')->select('shop')->distinct('shop')->pluck('shop'),
+            'cond_auto_codes' => DB::table('product')->select('code')->distinct('code')->pluck('code'), 
+            'cond_auto_names' => DB::table('product')->select('name')->distinct('name')->pluck('name'),  
+            'cond_auto_channels' => array(
+                \App\Product::CHANNEL_DEFAULT => '默认',
+                \App\Product::CHANNEL_PROXY => '代销'
+            ), 
+            'cond_auto_spec_sizes' => DB::table('product')->select('spec_size')->distinct('spec_size')->pluck('spec_size'),
         ]);
     }
     

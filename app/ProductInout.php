@@ -18,9 +18,14 @@ class ProductInout extends Model
         'id_product', 'type', 'inout_key', 'inout_num',  'before_remain_num', 'after_remain_num'
     ];
 
-    const TYPE_REPO_IMPORT = 'repo_import';
-    const TYPE_REPO_DEPLOY = 'repo_deploy';
-    const TYPE_SALEOUT = 'sale_out';
+    const TYPE_REPO_IMPORT_FROM_HUAYING = 'repo_import_from_huaying';
+    const TYPE_REPO_IMPORT_FROM_LINGSHUI = 'repo_import_from_lingshui';
+    const TYPE_REPO_IMPORT_FROM_CMP = 'repo_import_from_cmp';
+    const TYPE_REPO_EXPORT_TO_HUAYING = 'repo_export_to_huaying';
+    const TYPE_REPO_EXPORT_TO_LINGSHUI = 'repo_export_to_lingshui';
+    const TYPE_REPO_EXPORT_TO_CMP = 'repo_export_to_cmp';
+    const TYPE_REFUND = 'refund';
+    const TYPE_SALEOUT = 'saleout';
     
     public static function repoDeploy($inoutp, &$error)
     {
@@ -340,12 +345,22 @@ class ProductInout extends Model
     
     public function getTypetxt()
     {
-        if($this->type == self::TYPE_REPO_IMPORT){
-            return '库存导入';
-        }else if($this->type == self::TYPE_REPO_DEPLOY){
-            return '库存调整';
+        if($this->type == self::TYPE_REPO_IMPORT_FROM_HUAYING){
+            return '华蓥调入';
+        }else if($this->type == self::TYPE_REPO_IMPORT_FROM_LINGSHUI){
+            return '邻水调入';
+        }else if($this->type == self::TYPE_REPO_IMPORT_FROM_CMP){
+            return '公司调入';
+        }else if($this->type == self::TYPE_REPO_EXPORT_TO_HUAYING){
+            return '调出至华蓥';
+        }else if($this->type == self::TYPE_REPO_EXPORT_TO_LINGSHUI){
+            return '调出至邻水';
+        }else if($this->type == self::TYPE_REPO_EXPORT_TO_CMP){
+            return '调出至公司';
+        }else if($this->type == self::TYPE_REFUND){
+            return '客户退货';
         }else if($this->type == self::TYPE_SALEOUT){
-            return '销售出库';
+            return '销售出货';
         }
     }
     

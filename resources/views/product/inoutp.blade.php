@@ -20,81 +20,24 @@
                     <form action="{{ route('inoutp') }}" method="GET" style="position: sticky; top: 0; z-index: 99; background-color: #FFF;">
                         <div class="row">
                             <div class="col">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="basic-addon1">商品编码</span>
-                                    </div>
-                                    <input value="{{ isset($cond['code'])? $cond['code'] : '' }}" type="text" class="form-control" name="cond[code]" placeholder="" />
-                                </div>
+                                <div class="productcodeinput combo-func1" combo-name="code"></div>
                             </div>
                             <div class="col">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="basic-addon1">商品名称</span>
-                                    </div>
-                                    <input value="{{ isset($cond['name'])? $cond['name'] : '' }}" type="text" class="form-control" name="cond[name]" placeholder="" />
-                                </div>
+                                <div class="productname combo-func1" combo-name="name"></div>
                             </div>
                             <div class="col">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="basic-addon1">商品尺码</span>
-                                    </div>
-                                    <input value="{{ isset($cond['spec_size'])? $cond['spec_size'] : '' }}" type="text" class="form-control" name="cond[spec_size]" placeholder="" />
-                                </div>
+                                <div class="productsize combo-func1" combo-name="spec_size"></div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="basic-addon1">所在门店</span>
-                                    </div>
-                                    <input value="{{ isset($cond['shop'])? $cond['shop'] : '' }}" type="text" class="form-control" name="cond[shop]" placeholder="" />
-                                </div>
+                                <div class="shopinput combo-func1" combo-name="shop"></div>
                             </div>
                             <div class="col">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="basic-addon1">调整类型</span>
-                                    </div>
-                                    {{
-                                        Form::select(
-                                            'cond[type]',
-                                            [
-                                                '' => '请选择', 
-                                                \App\ProductInout::TYPE_REPO_IMPORT => '库存导入', 
-                                                \App\ProductInout::TYPE_REPO_DEPLOY => '库存调配', 
-                                                \App\ProductInout::TYPE_SALEOUT => '销售出货'
-                                            ], 
-                                            isset($cond['type'])? $cond['type'] : '',
-                                            array(
-                                                'class' => 'form-control',
-                                            )
-                                        )
-                                    }}
-                                </div>
+                                <div class="typeinput combo-func1" combo-name="type"></div>
                             </div>
                             <div class="col">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="basic-addon1">渠道</span>
-                                    </div>
-                                    {{
-                                        Form::select(
-                                            'cond[channel]',
-                                            [
-                                                '' => '请选择', 
-                                                \App\Product::CHANNEL_DEFAULT => '默认', 
-                                                \App\Product::CHANNEL_PROXY => '代销'
-                                            ], 
-                                            old('cond.channel'),
-                                            array(
-                                                'class' => '',
-                                            )
-                                        )
-                                    }}
-                                </div>
+                                <div class="productchannel combo-func1" combo-name="channel"></div>
                             </div>
                             <div class="col">
                                 <button type="submit" class="btn btn-primary mb-2">筛选记录</button>
@@ -146,7 +89,80 @@
 
 @section('pageend')
 <script>
-	
+	$(document).ready(function(){
+		$(".typeinput").jqxComboBox({
+			placeHolder: '调整类型', 
+			multiSelect: true, 
+			source: <?php echo json_encode($cond_auto_types); ?>, 
+			selectedIndex: 0, 
+			height: 30
+		});
+		$.each(<?php echo json_encode($cond['type']); ?>, function(k, v){
+			$(".typeinput").jqxComboBox('selectItem', v);
+		});
+		$(".shopinput").jqxComboBox({
+			placeHolder: '所在门店', 
+			multiSelect: true, 
+			source: <?php echo json_encode($cond_auto_shops); ?>, 
+			selectedIndex: 0, 
+			height: 30
+		});
+		$.each(<?php echo json_encode($cond['shop']); ?>, function(k, v){
+			$(".shopinput").jqxComboBox('selectItem', v);
+		});
+		$(".productcodeinput").jqxComboBox({
+			placeHolder: '商品编码', 
+			multiSelect: true, 
+			source: <?php echo json_encode($cond_auto_codes); ?>, 
+			selectedIndex: 0, 
+			height: 30
+		});
+		$.each(<?php echo json_encode($cond['code']); ?>, function(k, v){
+			$(".productcodeinput").jqxComboBox('selectItem', v);
+		});
+		$(".productname").jqxComboBox({
+			placeHolder: '商品名称', 
+			multiSelect: true, 
+			source: <?php echo json_encode($cond_auto_names); ?>, 
+			selectedIndex: 0, 
+			height: 30
+		});
+		$.each(<?php echo json_encode($cond['name']); ?>, function(k, v){
+			$(".productname").jqxComboBox('selectItem', v);
+		});
+		$(".productchannel").jqxComboBox({
+			placeHolder: '渠道', 
+			multiSelect: true, 
+			source: <?php echo json_encode($cond_auto_channels); ?>, 
+			selectedIndex: 0, 
+			height: 30
+		});
+		$.each(<?php echo json_encode($cond['channel']); ?>, function(k, v){
+			$(".productchannel").jqxComboBox('selectItem', v);
+		});
+		$(".productsize").jqxComboBox({
+			placeHolder: '商品尺码', 
+			multiSelect: true, 
+			source: <?php echo json_encode($cond_auto_spec_sizes); ?>, 
+			selectedIndex: 0, 
+			height: 30
+		});
+		$.each(<?php echo json_encode($cond['spec_size']); ?>, function(k, v){
+			$(".productsize").jqxComboBox('selectItem', v);
+		});
+
+		$('.combo-func1').on('change', function(e){
+			var thisObj = $(this);
+			thisObj.children('.selectedvalue').remove();
+			
+			var items = thisObj.jqxComboBox('getSelectedItems'); 
+			$.each(items, function(k, item){
+				var name = thisObj.attr('combo-name');
+				thisObj.append('<input type="hidden" class="selectedvalue" name="cond['+name+'][]" value="'+item.value+'" />');
+			});
+		});
+		$('.combo-func1').change();
+	});
 </script>
 @parent
 @endsection

@@ -12,7 +12,15 @@
 
     <!-- Styles -->
     <link href="{{ asset('bootstrap4/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('jqwidgets/styles/jqx.base.css') }}" rel="stylesheet">
+    <link href="{{ asset('jqwidgets/styles/jqx.office.css') }}" rel="stylesheet">
     <style>
+        .combo-func1 {
+        	margin-bottom: 10px;
+        }
+        .jqx-combobox-input {
+        	width: 100% !important;
+        }
         .invalid-feedback {
         	display: block;
         }
@@ -110,11 +118,31 @@
     </div>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/jquery.slim.min.js') }}"></script>
-    <script src="{{ asset('js/popper.min.js') }}"></script>
+<!--     <script src="{{ asset('js/jquery-1.11.1.min.js') }}"></script> -->
+<!--     <script src="{{ asset('js/jquery.slim.min.js') }}"></script> -->
+<!--     <script src="{{ asset('js/popper.min.js') }}"></script> -->
     <script src="{{ asset('bootstrap4/js/bootstrap.min.js') }}"></script>
+    
+    <script src="{{ asset('jqwidgets/jqxcore.js') }}"></script>
+    <script src="{{ asset('jqwidgets/jqxbuttons.js') }}"></script>
+    <script src="{{ asset('jqwidgets/jqxscrollbar.js') }}"></script>
+    <script src="{{ asset('jqwidgets/jqxlistbox.js') }}"></script>
+    <script src="{{ asset('jqwidgets/jqxcombobox.js') }}"></script>
+    
+    <script>
+    $(document).ready(function(){
+    	$('form.forbidden').submit(function(){
+            if($(this).hasClass('forbidden')){
+    			return false;
+            }
+    	});
+        $('form.forbidden .submit-btn').on('click', function(){
+            $(this).parents('form').removeClass('forbidden').submit();
+    	});
+	});
+    </script>
     @section('pageend')
-        
+    
     @show
 </body>
 </html>
