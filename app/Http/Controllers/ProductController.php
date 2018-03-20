@@ -60,16 +60,16 @@ class ProductController extends Controller
             'productsChunk' => $productsChunk, 
             'cond' => $cond, 
 
-            'cond_auto_brands' => DB::table('product')->select('brand')->distinct('brand')->pluck('brand'),
-            'cond_auto_shops' => DB::table('product')->select('shop')->distinct('shop')->pluck('shop'),
-            'cond_auto_codes' => DB::table('product')->select('code')->distinct('code')->pluck('code'), 
-            'cond_auto_years' => DB::table('product')->select('year')->distinct('year')->pluck('year'),
-            'cond_auto_names' => DB::table('product')->select('name')->distinct('name')->pluck('name'),  
+            'cond_auto_brands' => DB::table('product')->select('brand')->groupBy('brand')->pluck('brand'),
+            'cond_auto_shops' => DB::table('product')->select('shop')->groupBy('shop')->pluck('shop'),
+            'cond_auto_codes' => DB::table('product')->select('code')->groupBy('code')->pluck('code'), 
+            'cond_auto_years' => DB::table('product')->select('year')->groupBy('year')->pluck('year'),
+            'cond_auto_names' => DB::table('product')->select('name')->groupBy('name')->pluck('name'),  
             'cond_auto_channels' => array(
                 \App\Product::CHANNEL_DEFAULT => '默认',
                 \App\Product::CHANNEL_PROXY => '代销'
             ), 
-            'cond_auto_spec_sizes' => DB::table('product')->select('spec_size')->distinct('spec_size')->pluck('spec_size'),
+            'cond_auto_spec_sizes' => DB::table('product')->select('spec_size')->groupBy('spec_size')->pluck('spec_size'),
         ]);
     }
     
@@ -150,16 +150,16 @@ class ProductController extends Controller
                 \App\ProductInout::TYPE_REFUND => '客户退货',
                 \App\ProductInout::TYPE_SALEOUT => '销售出货'
             ),
-            'cond_auto_brands' => DB::table('product')->select('brand')->distinct('brand')->pluck('brand'),
-            'cond_auto_shops' => DB::table('product')->select('shop')->distinct('shop')->pluck('shop'),
-            'cond_auto_years' => DB::table('product')->select('year')->distinct('year')->pluck('year'),
-            'cond_auto_codes' => DB::table('product')->select('code')->distinct('code')->pluck('code'), 
-            'cond_auto_names' => DB::table('product')->select('name')->distinct('name')->pluck('name'),  
+            'cond_auto_brands' => DB::table('product')->select('brand')->groupBy('brand')->pluck('brand'),
+            'cond_auto_shops' => DB::table('product')->select('shop')->groupBy('shop')->pluck('shop'),
+            'cond_auto_years' => DB::table('product')->select('year')->groupBy('year')->pluck('year'),
+            'cond_auto_codes' => DB::table('product')->select('code')->groupBy('code')->pluck('code'), 
+            'cond_auto_names' => DB::table('product')->select('name')->groupBy('name')->pluck('name'),  
             'cond_auto_channels' => array(
                 \App\Product::CHANNEL_DEFAULT => '默认',
                 \App\Product::CHANNEL_PROXY => '代销'
             ), 
-            'cond_auto_spec_sizes' => DB::table('product')->select('spec_size')->distinct('spec_size')->pluck('spec_size'),
+            'cond_auto_spec_sizes' => DB::table('product')->select('spec_size')->groupBy('spec_size')->pluck('spec_size'),
         ]);
     }
     
