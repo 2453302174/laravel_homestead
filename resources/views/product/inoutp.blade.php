@@ -52,7 +52,7 @@
                     <hr />
                 
                     <table class="table table-bordered table-hover text-center tbs1">
-                        <tr>
+                        <tr style="position: sticky; top: 10px; background-color: #fff;">
 <!--                             <th>操作码</th> -->
                             <th>调整时间</th>
                             <th>调整类型</th>

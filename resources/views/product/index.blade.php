@@ -53,7 +53,7 @@
                     <form method="POST" action="{{ route('inoutadjust') }}">
                         @csrf
                         <table class="table table-bordered table-hover text-center tbs1">
-                            <tr>
+                            <tr style="position: sticky; top: 10px; background-color: #fff;">
                                 <th>商品代码</th>
                                 <th>商品名称</th>
                                 <th>年份</th>
