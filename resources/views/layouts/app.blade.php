@@ -20,6 +20,7 @@
         	overflow: visible;
         	position: relative;
         	box-shadow: 4px 2px 2px #aab;
+        	display: block; 
         }
         .fadetoggle.out {
         	height: 0;

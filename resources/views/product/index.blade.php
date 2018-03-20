@@ -66,8 +66,16 @@
                                 <th>入库时间</th>
                                 <th>库存调整</th>
                             </tr>
+                            <?php  
+                                $remain_num_sum = 0; 
+                                $remain_amount = 0;
+                            ?>
                             @foreach ($productsChunk as $code => $details)
                                 @foreach ($details['records'] as $k => $product)
+                                    <?php 
+                                        $remain_num_sum += $product->remain_num;
+                                        $remain_amount += $product->price * $product->remain_num;
+                                    ?>
                                     <tr>
                                         @if($k == 0)
                                             <td class="rowspan" rowspan={{ count($details['records']) }}>{{ $details['code'] }}</td>
@@ -116,6 +124,20 @@
                                     </tr>
                                 @endforeach
                             @endforeach
+                            
+                            <tr>
+                                <td>小计</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><?php echo $remain_num_sum; ?></td>
+                                <td></td>
+                                <td><?php echo $remain_amount; ?>元</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
                         </table>
                         
                         <div class="form-group row mb-0" style="position: sticky; bottom: 0; padding: 10px 0; background-color: #fff;">

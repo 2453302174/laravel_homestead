@@ -257,9 +257,7 @@ class ProductController extends Controller
             }else{
                 $request->session()->flash('import_status', $errorCoat . "||" . $errorTrousers . '||' . $errorShoes . '||' . $errorAccessory);
             }
-            
         }
-        
         
         return view('product/import', [
             
