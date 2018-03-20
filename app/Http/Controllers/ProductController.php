@@ -23,6 +23,7 @@ class ProductController extends Controller
     {
         $cond = $request->input('cond', array());
         $cond = array_merge(array(
+            'brand' => array(), 
             'shop' => array(), 
             'code' => array(),
             'name' => array(),
@@ -59,6 +60,7 @@ class ProductController extends Controller
             'productsChunk' => $productsChunk, 
             'cond' => $cond, 
 
+            'cond_auto_brands' => DB::table('product')->select('brand')->distinct('brand')->pluck('brand'),
             'cond_auto_shops' => DB::table('product')->select('shop')->distinct('shop')->pluck('shop'),
             'cond_auto_codes' => DB::table('product')->select('code')->distinct('code')->pluck('code'), 
             'cond_auto_years' => DB::table('product')->select('year')->distinct('year')->pluck('year'),
@@ -95,6 +97,7 @@ class ProductController extends Controller
         $cond = $request->input('cond', array());
         $cond = array_merge(array(
             'type' => array(), 
+            'brand' => array(), 
             'shop' => array(), 
             'year' => array(), 
             'code' => array(),
@@ -147,6 +150,7 @@ class ProductController extends Controller
                 \App\ProductInout::TYPE_REFUND => '客户退货',
                 \App\ProductInout::TYPE_SALEOUT => '销售出货'
             ),
+            'cond_auto_brands' => DB::table('product')->select('brand')->distinct('brand')->pluck('brand'),
             'cond_auto_shops' => DB::table('product')->select('shop')->distinct('shop')->pluck('shop'),
             'cond_auto_years' => DB::table('product')->select('year')->distinct('year')->pluck('year'),
             'cond_auto_codes' => DB::table('product')->select('code')->distinct('code')->pluck('code'), 

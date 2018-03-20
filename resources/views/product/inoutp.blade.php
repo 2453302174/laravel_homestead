@@ -43,6 +43,9 @@
                                 <div class="productyear combo-func1" combo-name="year"></div>
                             </div>
                             <div class="col">
+                                <div class="productbrand combo-func1" combo-name="brand"></div>
+                            </div>
+                            <div class="col">
                                 <button type="submit" class="btn btn-primary mb-2">筛选记录</button>
                             </div>
                         </div>
@@ -59,6 +62,7 @@
                             <th>调整数量</th>
                             <th>商品编码</th>
                             <th>商品名称</th>
+                            <th>品牌</th>
                             <th>产品年份</th>
                             <th>所在门店</th>
                             <th>商品尺码</th>
@@ -79,6 +83,7 @@
                                     </td>
                                     <td>{{ $productInout->product->code }}</td>
                                     <td>{{ $productInout->product->name }}</td>
+                                    <td>{{ $productInout->product->brand }}</td>
                                     <td>{{ $productInout->product->year }}</td>
                                     <td>{{ $productInout->product->shop }}</td>
                                     <td>{{ $productInout->product->spec_size }}</td>
@@ -166,6 +171,16 @@
 		});
 		$.each(<?php echo json_encode($cond['year']); ?>, function(k, v){
 			$(".productyear").jqxComboBox('selectItem', v);
+		});
+		$(".productbrand").jqxComboBox({
+			placeHolder: '品牌', 
+			multiSelect: true, 
+			source: <?php echo json_encode($cond_auto_brands); ?>, 
+			selectedIndex: 0, 
+			height: 30
+		});
+		$.each(<?php echo json_encode($cond['brand']); ?>, function(k, v){
+			$(".productbrand").jqxComboBox('selectItem', v);
 		});
 
 		$('.combo-func1').on('change', function(e){
