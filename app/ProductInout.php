@@ -117,6 +117,23 @@ class ProductInout extends Model
                 }
                 $data[] = $line;
             }
+        }else if($type == 'accessory'){
+            foreach ($activesheet->getRowIterator(4) as $k => $row) {
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(FALSE);
+                $line = array();
+                foreach ($cellIterator as $kk => $cell) {
+                    $v = $cell->getValue();
+                    if(in_array($kk, array('I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA'))){
+                        if(!empty($v)){
+                            $line['size'][$kk] = $v;
+                        }
+                    }else{
+                        $line[] = empty($v)? '' : $v;
+                    }
+                }
+                $data[] = $line;
+            }
         }
         
         return $data;
@@ -149,49 +166,51 @@ class ProductInout extends Model
                 $color = empty($line[7])? '' : $line[7];
                 $price = empty($line[9])? '' : $line[9];
                 $price = round($price, 2);
-                foreach($line['size'] as $sizeRow => $spec_size_num){
-                    if($spec_size_num > 0){
-                        $spec_size = isset($sizeMatch[$sizeRow])? $sizeMatch[$sizeRow] : null;
-                        if($spec_size === null){
-                            $error = '衣服文件：商品编码'.$code.': 尺寸不能识别，衣服文件整体取消导入';
-                            DB::rollBack();
-                            return false;
-                        }
-                        
-                        $product = Product::where('code', $code)
-                        ->where('spec_size', $spec_size)
-                        ->where('channel', $channel)
-                        ->where('shop', $shop)
-                        ->first();
-                        if(empty($product)){
-                            $product = new Product([
-                                'code' => $code,
-                                'name' => $name,
-                                'brand' => $brand,
-                                'channel' => $channel,
-                                'shop' => $shop,
-                                'year' => $year,
-                                'colorcode' => $colorcode,
-                                'color' => $color,
-                                'price' => $price,
-                                'spec_size' => $spec_size,
-                                'remain_num' => 0, 
+                if(isset($line['size'])){
+                    foreach($line['size'] as $sizeRow => $spec_size_num){
+                        if($spec_size_num > 0){
+                            $spec_size = isset($sizeMatch[$sizeRow])? $sizeMatch[$sizeRow] : null;
+                            if($spec_size === null){
+                                $error = '衣服文件：商品编码'.$code.': 尺寸不能识别，衣服文件整体取消导入';
+                                DB::rollBack();
+                                return false;
+                            }
+                    
+                            $product = Product::where('code', $code)
+                            ->where('spec_size', $spec_size)
+                            ->where('channel', $channel)
+                            ->where('shop', $shop)
+                            ->first();
+                            if(empty($product)){
+                                $product = new Product([
+                                    'code' => $code,
+                                    'name' => $name,
+                                    'brand' => $brand,
+                                    'channel' => $channel,
+                                    'shop' => $shop,
+                                    'year' => $year,
+                                    'colorcode' => $colorcode,
+                                    'color' => $color,
+                                    'price' => $price,
+                                    'spec_size' => $spec_size,
+                                    'remain_num' => 0,
+                                ]);
+                                $product->save();
+                            }
+                    
+                            $productInout = new self([
+                                'id_product' => $product->id_product,
+                                'type' => $type,
+                                'inout_key' => $inout_key,
+                                'inout_num' => $spec_size_num,
+                                'before_remain_num' => $product->remain_num,
+                                'after_remain_num' => $product->remain_num + $spec_size_num
                             ]);
+                            $productInout->save();
+                    
+                            $product->remain_num = $productInout->after_remain_num;
                             $product->save();
                         }
-                        
-                        $productInout = new self([
-                            'id_product' => $product->id_product,
-                            'type' => $type,
-                            'inout_key' => $inout_key,
-                            'inout_num' => $spec_size_num,
-                            'before_remain_num' => $product->remain_num,
-                            'after_remain_num' => $product->remain_num + $spec_size_num
-                        ]);
-                        $productInout->save();
-                        
-                        $product->remain_num = $productInout->after_remain_num;
-                        $product->save();
                     }
                 }
             }
@@ -237,49 +256,51 @@ class ProductInout extends Model
                 $color = empty($line[7])? '' : $line[7];
                 $price = empty($line[9])? '' : $line[9];
                 $price = round($price, 2);
-                foreach($line['size'] as $sizeRow => $spec_size_num){
-                    if($spec_size_num > 0){
-                        $spec_size = isset($sizeMatch[$sizeRow])? $sizeMatch[$sizeRow] : null;
-                        if($spec_size === null){
-                            $error = '裤子文件：商品编码'.$code.': 尺寸不能识别，裤子文件整体取消导入。';
-                            DB::rollBack();
-                            return false;
-                        }
-    
-                        $product = Product::where('code', $code)
-                        ->where('spec_size', $spec_size)
-                        ->where('channel', $channel)
-                        ->where('shop', $shop)
-                        ->first();
-                        if(empty($product)){
-                            $product = new Product([
-                                'code' => $code,
-                                'name' => $name,
-                                'brand' => $brand,
-                                'channel' => $channel,
-                                'shop' => $shop,
-                                'year' => $year,
-                                'colorcode' => $colorcode,
-                                'color' => $color,
-                                'price' => $price,
-                                'spec_size' => $spec_size,
-                                'remain_num' => 0,
+                if(isset($line['size'])){
+                    foreach($line['size'] as $sizeRow => $spec_size_num){
+                        if($spec_size_num > 0){
+                            $spec_size = isset($sizeMatch[$sizeRow])? $sizeMatch[$sizeRow] : null;
+                            if($spec_size === null){
+                                $error = '裤子文件：商品编码'.$code.': 尺寸不能识别，裤子文件整体取消导入。';
+                                DB::rollBack();
+                                return false;
+                            }
+                    
+                            $product = Product::where('code', $code)
+                            ->where('spec_size', $spec_size)
+                            ->where('channel', $channel)
+                            ->where('shop', $shop)
+                            ->first();
+                            if(empty($product)){
+                                $product = new Product([
+                                    'code' => $code,
+                                    'name' => $name,
+                                    'brand' => $brand,
+                                    'channel' => $channel,
+                                    'shop' => $shop,
+                                    'year' => $year,
+                                    'colorcode' => $colorcode,
+                                    'color' => $color,
+                                    'price' => $price,
+                                    'spec_size' => $spec_size,
+                                    'remain_num' => 0,
+                                ]);
+                                $product->save();
+                            }
+                    
+                            $productInout = new self([
+                                'id_product' => $product->id_product,
+                                'type' => $type,
+                                'inout_key' => $inout_key,
+                                'inout_num' => $spec_size_num,
+                                'before_remain_num' => $product->remain_num,
+                                'after_remain_num' => $product->remain_num + $spec_size_num
                             ]);
+                            $productInout->save();
+                    
+                            $product->remain_num = $productInout->after_remain_num;
                             $product->save();
                         }
-    
-                        $productInout = new self([
-                            'id_product' => $product->id_product,
-                            'type' => $type,
-                            'inout_key' => $inout_key,
-                            'inout_num' => $spec_size_num,
-                            'before_remain_num' => $product->remain_num,
-                            'after_remain_num' => $product->remain_num + $spec_size_num
-                        ]);
-                        $productInout->save();
-    
-                        $product->remain_num = $productInout->after_remain_num;
-                        $product->save();
                     }
                 }
             }
@@ -320,48 +341,126 @@ class ProductInout extends Model
                 $color = empty($line[7])? '' : $line[7];
                 $price = empty($line[9])? '' : $line[9];
                 $price = round($price, 2);
-                foreach($line['size'] as $sizeRow => $spec_size_num){
-                    if($spec_size_num > 0){
-                        $spec_size = isset($sizeMatch[$sizeRow])? $sizeMatch[$sizeRow] : null;
-                        if($spec_size === null){
-                            $error = '鞋子文件：商品编码'.$code.': 尺寸不能识别，鞋子文件整体取消导入';
-                            DB::rollBack();
-                            return false;
-                        }
-    
-                        $product = Product::where('code', $code)
-                        ->where('spec_size', $spec_size)
-                        ->where('channel', $channel)
-                        ->where('shop', $shop)
-                        ->first();
-                        if(empty($product)){
-                            $product = new Product([
-                                'code' => $code,
-                                'name' => $name,
-                                'brand' => $brand,
-                                'channel' => $channel,
-                                'shop' => $shop,
-                                'year' => $year,
-                                'colorcode' => $colorcode,
-                                'price' => $price,
-                                'spec_size' => $spec_size,
-                                'remain_num' => 0,
+                if(isset($line['size'])){
+                    foreach($line['size'] as $sizeRow => $spec_size_num){
+                        if($spec_size_num > 0){
+                            $spec_size = isset($sizeMatch[$sizeRow])? $sizeMatch[$sizeRow] : null;
+                            if($spec_size === null){
+                                $error = '鞋子文件：商品编码'.$code.': 尺寸不能识别，鞋子文件整体取消导入';
+                                DB::rollBack();
+                                return false;
+                            }
+                    
+                            $product = Product::where('code', $code)
+                            ->where('spec_size', $spec_size)
+                            ->where('channel', $channel)
+                            ->where('shop', $shop)
+                            ->first();
+                            if(empty($product)){
+                                $product = new Product([
+                                    'code' => $code,
+                                    'name' => $name,
+                                    'brand' => $brand,
+                                    'channel' => $channel,
+                                    'shop' => $shop,
+                                    'year' => $year,
+                                    'colorcode' => $colorcode,
+                                    'price' => $price,
+                                    'spec_size' => $spec_size,
+                                    'remain_num' => 0,
+                                ]);
+                                $product->save();
+                            }
+                    
+                            $productInout = new self([
+                                'id_product' => $product->id_product,
+                                'type' => $type,
+                                'inout_key' => $inout_key,
+                                'inout_num' => $spec_size_num,
+                                'before_remain_num' => $product->remain_num,
+                                'after_remain_num' => $product->remain_num + $spec_size_num
                             ]);
+                            $productInout->save();
+                    
+                            $product->remain_num = $productInout->after_remain_num;
                             $product->save();
                         }
+                    }
+                }
+            }
+            DB::commit();
+        }catch (Exception $e){
+            DB::rollBack();
+        }
     
-                        $productInout = new self([
-                            'id_product' => $product->id_product,
-                            'type' => $type,
-                            'inout_key' => $inout_key,
-                            'inout_num' => $spec_size_num,
-                            'before_remain_num' => $product->remain_num,
-                            'after_remain_num' => $product->remain_num + $spec_size_num
-                        ]);
-                        $productInout->save();
+        return $inout_key;
+    }
     
-                        $product->remain_num = $productInout->after_remain_num;
-                        $product->save();
+    public static function importAccessory($data, $type, $inout_key = null, &$error)
+    {
+        $inout_key = ($inout_key === null)? self::genInoutkey() : $inout_key;
+    
+        $sizeMatch = array(
+            'R' => '均码',
+        );
+    
+        try{
+            DB::beginTransaction();
+            foreach($data as $line){
+                $code = empty($line[0])? '' : $line[0];
+                $name = empty($line[1])? '' : $line[1];
+                $brand = empty($line[2])? '' : $line[2];
+                $channel = $line[3] == '2'? Product::CHANNEL_PROXY : Product::CHANNEL_DEFAULT;
+                $shop = empty($line[4])? '' : $line[4];
+                $year = empty($line[5])? '' : $line[5];
+                $colorcode = empty($line[6])? '' : $line[6];
+                $color = empty($line[7])? '' : $line[7];
+                $price = empty($line[9])? '' : $line[9];
+                $price = round($price, 2);
+                if(isset($line['size'])){
+                    foreach($line['size'] as $sizeRow => $spec_size_num){
+                        if($spec_size_num > 0){
+                            $spec_size = isset($sizeMatch[$sizeRow])? $sizeMatch[$sizeRow] : null;
+                            if($spec_size === null){
+                                $error = '配件文件：商品编码'.$code.': 尺寸不能识别，配件文件整体取消导入';
+                                DB::rollBack();
+                                return false;
+                            }
+                    
+                            $product = Product::where('code', $code)
+                            ->where('spec_size', $spec_size)
+                            ->where('channel', $channel)
+                            ->where('shop', $shop)
+                            ->first();
+                            if(empty($product)){
+                                $product = new Product([
+                                    'code' => $code,
+                                    'name' => $name,
+                                    'brand' => $brand,
+                                    'channel' => $channel,
+                                    'shop' => $shop,
+                                    'year' => $year,
+                                    'colorcode' => $colorcode,
+                                    'price' => $price,
+                                    'spec_size' => $spec_size,
+                                    'remain_num' => 0,
+                                ]);
+                                $product->save();
+                            }
+                    
+                            $productInout = new self([
+                                'id_product' => $product->id_product,
+                                'type' => $type,
+                                'inout_key' => $inout_key,
+                                'inout_num' => $spec_size_num,
+                                'before_remain_num' => $product->remain_num,
+                                'after_remain_num' => $product->remain_num + $spec_size_num
+                            ]);
+                            $productInout->save();
+                    
+                            $product->remain_num = $productInout->after_remain_num;
+                            $product->save();
+                        }
                     }
                 }
             }

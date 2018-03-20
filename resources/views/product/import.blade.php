@@ -134,7 +134,46 @@
                                     </div>
                                 </div>
                             </div>
-                            
+                            <div class="col">
+                                <div class="card small" style="margin-top: 20px;">
+                                    <div class="card-header">配件(皮带/钱包)</div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col">
+                                                <input name="file[accessory]" type="file" />
+                                                @if ($errors->has('file.accessory'))
+                                                    <span class="invalid-feedback">
+                                                        <strong>{{ $errors->first('file.accessory') }}</strong>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="col">
+                                                {{
+                                                    Form::select(
+                                                        'type[accessory]',
+                                                        [
+                                                            \App\ProductInout::TYPE_REPO_IMPORT_FROM_HUAYING => '华蓥调入',
+                                                            \App\ProductInout::TYPE_REPO_IMPORT_FROM_LINGSHUI => '邻水调入',
+                                                            \App\ProductInout::TYPE_REPO_IMPORT_FROM_CMP => '公司调入',
+                                                            \App\ProductInout::TYPE_REPO_EXPORT_TO_HUAYING => '调出至华蓥',
+                                                            \App\ProductInout::TYPE_REPO_EXPORT_TO_LINGSHUI => '调出至邻水',
+                                                            \App\ProductInout::TYPE_REPO_EXPORT_TO_CMP => '调出至公司',
+                                                            \App\ProductInout::TYPE_REFUND => '客户退货',
+                                                            \App\ProductInout::TYPE_SALEOUT => '销售出货'
+                                                        ], 
+                                                        old('type.accessory'),
+                                                        array(
+                                                            'class' => '',
+                                                        )
+                                                    )
+                                                }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col">
                                 @if (session('import_status'))
                                     <div class="alert alert-success" style="margin-top: 20px;">

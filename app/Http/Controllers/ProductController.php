@@ -165,6 +165,7 @@ class ProductController extends Controller
             'file.coat' => [new ProductImportFile()],
             'file.trousers' => [new ProductImportFile()],
             'file.shoes' => [new ProductImportFile()],
+            'file.accessory' => [new ProductImportFile()],
         ]);
 
         if ($request->hasFile('file')){
@@ -229,12 +230,32 @@ class ProductController extends Controller
                 $data = ProductInout::formatImportFileData($activesheet, 'shoes');
                 $importResultShoes = ProductInout::importShoes($data, $importType, $inout_key, $errorShoes);
             }
+
+            $importResultAccessory = true;
+            $errorAccessory = '';
+            if ($request->hasFile('file.accessory') && $request->file('file.accessory')->isValid()) {
+                $path = $request->file('file.accessory')->path();
+                
+                $importType = $request->input('type.accessory');
             
-            if($importResultCoat && $importResultTrousers && $importResultShoes){
+                $clientExt = $request->file('file.accessory')->getClientOriginalExtension();
+                if($clientExt == 'xls'){
+                    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+                }else if($clientExt == 'xlsx'){
+                    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+                }
+                $spreadsheet = $reader->load($path);
+                $activesheet = $spreadsheet->getActiveSheet();
+            
+                $data = ProductInout::formatImportFileData($activesheet, 'accessory');
+                $importResultAccessory = ProductInout::importAccessory($data, $importType, $inout_key, $errorAccessory);
+            }
+            
+            if($importResultCoat && $importResultTrousers && $importResultShoes && $importResultAccessory){
                 $request->session()->flash('import_status', '导入成功');
                 // success redirect
             }else{
-                $request->session()->flash('import_status', $errorCoat . "||" . $errorTrousers . '||' . $errorShoes);
+                $request->session()->flash('import_status', $errorCoat . "||" . $errorTrousers . '||' . $errorShoes . '||' . $errorAccessory);
             }
             
         }
