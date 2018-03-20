@@ -72,10 +72,13 @@ class ProductInout extends Model
                 $cellIterator->setIterateOnlyExistingCells(FALSE);
                 $line = array();
                 foreach ($cellIterator as $kk => $cell) {
-                    if(!in_array($kk, array('H', 'I', 'J', 'K', 'L', 'M', 'N'))){
-                        $line[] = $cell->getValue();
+                    $v = $cell->getValue();
+                    if(in_array($kk, array('I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA'))){
+                        if(!empty($v)){
+                            $line['size'][$kk] = $v;
+                        }
                     }else{
-                        $line['size'][$kk] = $cell->getValue();
+                        $line[] = empty($v)? '' : $v;
                     }
                 }
                 $data[] = $line;
@@ -86,10 +89,13 @@ class ProductInout extends Model
                 $cellIterator->setIterateOnlyExistingCells(FALSE);
                 $line = array();
                 foreach ($cellIterator as $kk => $cell) {
-                    if(!in_array($kk, array('H', 'I', 'J', 'K', 'L', 'M', 'N'))){
-                        $line[] = $cell->getValue();
+                    $v = $cell->getValue();
+                    if(in_array($kk, array('I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA'))){
+                        if(!empty($v)){
+                            $line['size'][$kk] = $v;
+                        }
                     }else{
-                        $line['size'][$kk] = $cell->getValue();
+                        $line[] = empty($v)? '' : $v;
                     }
                 }
                 $data[] = $line;
@@ -100,10 +106,13 @@ class ProductInout extends Model
                 $cellIterator->setIterateOnlyExistingCells(FALSE);
                 $line = array();
                 foreach ($cellIterator as $kk => $cell) {
-                    if(!in_array($kk, array('I', 'J', 'K', 'L', 'M', 'N', 'O'))){
-                        $line[] = $cell->getValue();
+                    $v = $cell->getValue();
+                    if(in_array($kk, array('I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA'))){
+                        if(!empty($v)){
+                            $line['size'][$kk] = $v;
+                        }
                     }else{
-                        $line['size'][$kk] = $cell->getValue();
+                        $line[] = empty($v)? '' : $v;
                     }
                 }
                 $data[] = $line;
@@ -112,18 +121,19 @@ class ProductInout extends Model
         
         return $data;
     }
-    public static function importCoat($data, $inout_key = null, &$error)
+    public static function importCoat($data, $type, $inout_key = null, &$error)
     {
         $inout_key = ($inout_key === null)? self::genInoutkey() : $inout_key;
     
         $sizeMatch = array(
-            'H' => 42, 
-            'I' => 44, 
-            'J' => 46, 
-            'K' => 48, 
-            'L' => 50, 
-            'M' => 52, 
-            'N' => 54,     
+            'J' => '42',
+            'K' => '44',
+            'L' => '46',
+            'M' => '48',
+            'N' => '50',
+            'O' => '52',
+            'P' => '54',
+            'Q' => '56'
         );
         
         try{
@@ -136,12 +146,15 @@ class ProductInout extends Model
                 $shop = empty($line[4])? '' : $line[4];
                 $year = empty($line[5])? '' : $line[5];
                 $colorcode = empty($line[6])? '' : $line[6];
-                $price = empty($line[8])? '' : $line[8];
+                $color = empty($line[7])? '' : $line[7];
+                $price = empty($line[9])? '' : $line[9];
+                $price = round($price, 2);
                 foreach($line['size'] as $sizeRow => $spec_size_num){
                     if($spec_size_num > 0){
                         $spec_size = isset($sizeMatch[$sizeRow])? $sizeMatch[$sizeRow] : null;
                         if($spec_size === null){
-                            $error = '商品编码'.$code.': 尺寸不能识别';
+                            $error = '衣服文件：商品编码'.$code.': 尺寸不能识别，衣服文件整体取消导入';
+                            DB::rollBack();
                             return false;
                         }
                         
@@ -159,6 +172,7 @@ class ProductInout extends Model
                                 'shop' => $shop,
                                 'year' => $year,
                                 'colorcode' => $colorcode,
+                                'color' => $color,
                                 'price' => $price,
                                 'spec_size' => $spec_size,
                                 'remain_num' => 0, 
@@ -168,7 +182,7 @@ class ProductInout extends Model
                         
                         $productInout = new self([
                             'id_product' => $product->id_product,
-                            'type' => self::TYPE_REPO_IMPORT,
+                            'type' => $type,
                             'inout_key' => $inout_key,
                             'inout_num' => $spec_size_num,
                             'before_remain_num' => $product->remain_num,
@@ -189,18 +203,25 @@ class ProductInout extends Model
         return $inout_key;
     }
     
-    public static function importTrousers($data, $inout_key = null, &$error)
+    public static function importTrousers($data, $type, $inout_key = null, &$error)
     {
         $inout_key = ($inout_key === null)? self::genInoutkey() : $inout_key;
     
         $sizeMatch = array(
-            'H' => 29,
-            'I' => 30,
-            'J' => 31,
-            'K' => 32,
-            'L' => 33,
-            'M' => 34,
-            'N' => 35,
+            'J' => '29',
+            'K' => '30',
+            'L' => '31',
+            'M' => '32',
+            'N' => '33',
+            'O' => '34',
+            'P' => '35',
+            'Q' => '36',
+            'R' => '37',
+            'S' => '38',
+            'T' => '39',
+            'U' => '40',
+            'V' => '41',
+            'W' => '42'
         );
     
         try{
@@ -213,12 +234,15 @@ class ProductInout extends Model
                 $shop = empty($line[4])? '' : $line[4];
                 $year = empty($line[5])? '' : $line[5];
                 $colorcode = empty($line[6])? '' : $line[6];
-                $price = empty($line[8])? '' : $line[8];
+                $color = empty($line[7])? '' : $line[7];
+                $price = empty($line[9])? '' : $line[9];
+                $price = round($price, 2);
                 foreach($line['size'] as $sizeRow => $spec_size_num){
                     if($spec_size_num > 0){
                         $spec_size = isset($sizeMatch[$sizeRow])? $sizeMatch[$sizeRow] : null;
                         if($spec_size === null){
-                            $error = '商品编码'.$code.': 尺寸不能识别';
+                            $error = '裤子文件：商品编码'.$code.': 尺寸不能识别，裤子文件整体取消导入。';
+                            DB::rollBack();
                             return false;
                         }
     
@@ -236,6 +260,7 @@ class ProductInout extends Model
                                 'shop' => $shop,
                                 'year' => $year,
                                 'colorcode' => $colorcode,
+                                'color' => $color,
                                 'price' => $price,
                                 'spec_size' => $spec_size,
                                 'remain_num' => 0,
@@ -245,7 +270,7 @@ class ProductInout extends Model
     
                         $productInout = new self([
                             'id_product' => $product->id_product,
-                            'type' => self::TYPE_REPO_IMPORT,
+                            'type' => $type,
                             'inout_key' => $inout_key,
                             'inout_num' => $spec_size_num,
                             'before_remain_num' => $product->remain_num,
@@ -266,18 +291,20 @@ class ProductInout extends Model
         return $inout_key;
     }
     
-    public static function importShoes($data, $inout_key = null, &$error)
+    public static function importShoes($data, $type, $inout_key = null, &$error)
     {
         $inout_key = ($inout_key === null)? self::genInoutkey() : $inout_key;
     
         $sizeMatch = array(
-            'I' => 37,
-            'J' => 38,
-            'K' => 39,
-            'L' => 40,
-            'M' => 41,
-            'N' => 42,
-            'O' => 43,
+            'Q' => '36',
+            'R' => '37',
+            'S' => '38',
+            'T' => '39',
+            'U' => '40',
+            'V' => '41',
+            'W' => '42',
+            'X' => '43',
+            'Y' => '44'
         );
     
         try{
@@ -290,12 +317,15 @@ class ProductInout extends Model
                 $shop = empty($line[4])? '' : $line[4];
                 $year = empty($line[5])? '' : $line[5];
                 $colorcode = empty($line[6])? '' : $line[6];
+                $color = empty($line[7])? '' : $line[7];
                 $price = empty($line[9])? '' : $line[9];
+                $price = round($price, 2);
                 foreach($line['size'] as $sizeRow => $spec_size_num){
                     if($spec_size_num > 0){
                         $spec_size = isset($sizeMatch[$sizeRow])? $sizeMatch[$sizeRow] : null;
                         if($spec_size === null){
-                            $error = '商品编码'.$code.': 尺寸不能识别';
+                            $error = '鞋子文件：商品编码'.$code.': 尺寸不能识别，鞋子文件整体取消导入';
+                            DB::rollBack();
                             return false;
                         }
     
@@ -322,7 +352,7 @@ class ProductInout extends Model
     
                         $productInout = new self([
                             'id_product' => $product->id_product,
-                            'type' => self::TYPE_REPO_IMPORT,
+                            'type' => $type,
                             'inout_key' => $inout_key,
                             'inout_num' => $spec_size_num,
                             'before_remain_num' => $product->remain_num,

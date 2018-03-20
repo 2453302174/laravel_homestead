@@ -17,7 +17,7 @@
                 <div class="card-header">当前库存</div>
 
                 <div class="card-body">
-                    <form class="forbidden" action="{{ route('product') }}" method="GET" style="position: sticky; top: 0; z-index: 99; background-color: #FFF;">
+                    <form class="forbidden fadetoggle" action="{{ route('product') }}" method="GET" style="position: sticky; top: 0; z-index: 99; background-color: #FFF;">
                         <div class="row">
                             <div class="col">
                                 <div class="shopinput combo-func1" combo-name="shop"></div>
@@ -37,9 +37,16 @@
                                 <div class="productsize combo-func1" combo-name="spec_size"></div>
                             </div>
                             <div class="col">
+                                <div class="productyear combo-func1" combo-name="year"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
                                 <button type="button" class="submit-btn btn btn-primary mb-2">筛选记录</button>
                             </div>
                         </div>
+                        
+                        <a class="fadetoggle-btn" href="javascript: {}">收起/展开</a>
                     </form>
                     <hr />
                 
@@ -49,6 +56,7 @@
                             <tr>
                                 <th>商品代码</th>
                                 <th>商品名称</th>
+                                <th>年份</th>
                                 <th>所在门店</th>
                                 <th>渠道</th>
                                 <th>尺码</th>
@@ -65,6 +73,7 @@
                                             <td class="rowspan" rowspan={{ count($details['records']) }}>{{ $details['code'] }}</td>
                                             <td class="rowspan" rowspan={{ count($details['records']) }}>{{ $details['name'] }}</td>
                                         @endif
+                                        <td>{{ $product->year }}</td>
                                         <td>{{ $product->shop }}</td>
                                         <td>{{ $product->getChanneltxt() }}</td>
                                         <td>{{ $product->spec_size }}</td>
@@ -183,6 +192,16 @@
 		});
 		$.each(<?php echo json_encode($cond['spec_size']); ?>, function(k, v){
 			$(".productsize").jqxComboBox('selectItem', v);
+		});
+		$(".productyear").jqxComboBox({
+			placeHolder: '产品年份', 
+			multiSelect: true, 
+			source: <?php echo json_encode($cond_auto_years); ?>, 
+			selectedIndex: 0, 
+			height: 30
+		});
+		$.each(<?php echo json_encode($cond['year']); ?>, function(k, v){
+			$(".productyear").jqxComboBox('selectItem', v);
 		});
 
 		$('.combo-func1').on('change', function(e){

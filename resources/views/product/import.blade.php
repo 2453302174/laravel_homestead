@@ -24,12 +24,37 @@
                                 <div class="card small">
                                     <div class="card-header">衣服</div>
                                     <div class="card-body">
-                                        <input name="products[coat]" type="file" />
-                                        @if ($errors->has('products.coat'))
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $errors->first('products.coat') }}</strong>
-                                            </span>
-                                        @endif
+                                        <div class="row">
+                                            <div class="col">
+                                                <input name="file[coat]" type="file" />
+                                                @if ($errors->has('file.coat'))
+                                                    <span class="invalid-feedback">
+                                                        <strong>{{ $errors->first('file.coat') }}</strong>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="col">
+                                                {{
+                                                    Form::select(
+                                                        'type[coat]',
+                                                        [
+                                                            \App\ProductInout::TYPE_REPO_IMPORT_FROM_HUAYING => '华蓥调入',
+                                                            \App\ProductInout::TYPE_REPO_IMPORT_FROM_LINGSHUI => '邻水调入',
+                                                            \App\ProductInout::TYPE_REPO_IMPORT_FROM_CMP => '公司调入',
+                                                            \App\ProductInout::TYPE_REPO_EXPORT_TO_HUAYING => '调出至华蓥',
+                                                            \App\ProductInout::TYPE_REPO_EXPORT_TO_LINGSHUI => '调出至邻水',
+                                                            \App\ProductInout::TYPE_REPO_EXPORT_TO_CMP => '调出至公司',
+                                                            \App\ProductInout::TYPE_REFUND => '客户退货',
+                                                            \App\ProductInout::TYPE_SALEOUT => '销售出货'
+                                                        ], 
+                                                        old('type.coat'),
+                                                        array(
+                                                            'class' => '',
+                                                        )
+                                                    )
+                                                }}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -37,12 +62,37 @@
                                 <div class="card small">
                                     <div class="card-header">裤子</div>
                                     <div class="card-body">
-                                        <input name="products[trousers]" type="file" />
-                                        @if ($errors->has('products.trousers'))
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $errors->first('products.trousers') }}</strong>
-                                            </span>
-                                        @endif
+                                        <div class="row">
+                                            <div class="col">
+                                                <input name="file[trousers]" type="file" />
+                                                @if ($errors->has('file.trousers'))
+                                                    <span class="invalid-feedback">
+                                                        <strong>{{ $errors->first('file.trousers') }}</strong>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="col">
+                                                {{
+                                                    Form::select(
+                                                        'type[trousers]',
+                                                        [
+                                                            \App\ProductInout::TYPE_REPO_IMPORT_FROM_HUAYING => '华蓥调入',
+                                                            \App\ProductInout::TYPE_REPO_IMPORT_FROM_LINGSHUI => '邻水调入',
+                                                            \App\ProductInout::TYPE_REPO_IMPORT_FROM_CMP => '公司调入',
+                                                            \App\ProductInout::TYPE_REPO_EXPORT_TO_HUAYING => '调出至华蓥',
+                                                            \App\ProductInout::TYPE_REPO_EXPORT_TO_LINGSHUI => '调出至邻水',
+                                                            \App\ProductInout::TYPE_REPO_EXPORT_TO_CMP => '调出至公司',
+                                                            \App\ProductInout::TYPE_REFUND => '客户退货',
+                                                            \App\ProductInout::TYPE_SALEOUT => '销售出货'
+                                                        ], 
+                                                        old('type.trousers'),
+                                                        array(
+                                                            'class' => '',
+                                                        )
+                                                    )
+                                                }}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -50,12 +100,37 @@
                                 <div class="card small" style="margin-top: 20px;">
                                     <div class="card-header">鞋子</div>
                                     <div class="card-body">
-                                        <input name="products[shoes]" type="file" />
-                                        @if ($errors->has('products.shoes'))
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $errors->first('products.shoes') }}</strong>
-                                            </span>
-                                        @endif
+                                        <div class="row">
+                                            <div class="col">
+                                                <input name="file[shoes]" type="file" />
+                                                @if ($errors->has('file.shoes'))
+                                                    <span class="invalid-feedback">
+                                                        <strong>{{ $errors->first('file.shoes') }}</strong>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="col">
+                                                {{
+                                                    Form::select(
+                                                        'type[shoes]',
+                                                        [
+                                                            \App\ProductInout::TYPE_REPO_IMPORT_FROM_HUAYING => '华蓥调入',
+                                                            \App\ProductInout::TYPE_REPO_IMPORT_FROM_LINGSHUI => '邻水调入',
+                                                            \App\ProductInout::TYPE_REPO_IMPORT_FROM_CMP => '公司调入',
+                                                            \App\ProductInout::TYPE_REPO_EXPORT_TO_HUAYING => '调出至华蓥',
+                                                            \App\ProductInout::TYPE_REPO_EXPORT_TO_LINGSHUI => '调出至邻水',
+                                                            \App\ProductInout::TYPE_REPO_EXPORT_TO_CMP => '调出至公司',
+                                                            \App\ProductInout::TYPE_REFUND => '客户退货',
+                                                            \App\ProductInout::TYPE_SALEOUT => '销售出货'
+                                                        ], 
+                                                        old('type.shoes'),
+                                                        array(
+                                                            'class' => '',
+                                                        )
+                                                    )
+                                                }}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

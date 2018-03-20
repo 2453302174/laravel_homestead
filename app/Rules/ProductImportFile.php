@@ -26,7 +26,7 @@ class ProductImportFile implements Rule
     public function passes($attribute, $value)
     {
         $clientExt = $value->getClientOriginalExtension();
-        if(!in_array($clientExt, array('xls', 'xlsx', 'xlsm'))){
+        if(!in_array($clientExt, array('xls', 'xlsx'))){
             return false;
         }
 
@@ -51,6 +51,6 @@ class ProductImportFile implements Rule
      */
     public function message()
     {
-        return '请上传excel格式的报表文件';
+        return '请上传excel格式（支持.xls | .xlsx）的报表文件';
     }
 }

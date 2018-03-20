@@ -17,7 +17,7 @@
                 <div class="card-header">库存调整记录</div>
 
                 <div class="card-body">
-                    <form action="{{ route('inoutp') }}" method="GET" style="position: sticky; top: 0; z-index: 99; background-color: #FFF;">
+                    <form class="fadetoggle" action="{{ route('inoutp') }}" method="GET" style="position: sticky; top: 0; z-index: 99; background-color: #FFF;">
                         <div class="row">
                             <div class="col">
                                 <div class="productcodeinput combo-func1" combo-name="code"></div>
@@ -40,9 +40,14 @@
                                 <div class="productchannel combo-func1" combo-name="channel"></div>
                             </div>
                             <div class="col">
+                                <div class="productyear combo-func1" combo-name="year"></div>
+                            </div>
+                            <div class="col">
                                 <button type="submit" class="btn btn-primary mb-2">筛选记录</button>
                             </div>
                         </div>
+                        
+                        <a class="fadetoggle-btn" href="javascript: {}">收起/展开</a>
                     </form>
                     <hr />
                 
@@ -54,6 +59,7 @@
                             <th>调整数量</th>
                             <th>商品编码</th>
                             <th>商品名称</th>
+                            <th>产品年份</th>
                             <th>所在门店</th>
                             <th>商品尺码</th>
                             <th>渠道</th>
@@ -73,6 +79,7 @@
                                     </td>
                                     <td>{{ $productInout->product->code }}</td>
                                     <td>{{ $productInout->product->name }}</td>
+                                    <td>{{ $productInout->product->year }}</td>
                                     <td>{{ $productInout->product->shop }}</td>
                                     <td>{{ $productInout->product->spec_size }}</td>
                                     <td>{{ $productInout->product->getChanneltxt() }}</td>
@@ -149,6 +156,16 @@
 		});
 		$.each(<?php echo json_encode($cond['spec_size']); ?>, function(k, v){
 			$(".productsize").jqxComboBox('selectItem', v);
+		});
+		$(".productyear").jqxComboBox({
+			placeHolder: '产品年份', 
+			multiSelect: true, 
+			source: <?php echo json_encode($cond_auto_years); ?>, 
+			selectedIndex: 0, 
+			height: 30
+		});
+		$.each(<?php echo json_encode($cond['year']); ?>, function(k, v){
+			$(".productyear").jqxComboBox('selectItem', v);
 		});
 
 		$('.combo-func1').on('change', function(e){

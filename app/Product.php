@@ -13,7 +13,7 @@ class Product extends Model
     protected $primaryKey = 'id_product';
     
     protected $fillable = [
-        'code', 'name', 'brand', 'channel',  'shop', 'year', 'colorcode', 'price', 'spec_size', 'remain_num'
+        'code', 'name', 'brand', 'channel',  'shop', 'year', 'colorcode', 'color', 'price', 'spec_size', 'remain_num'
     ];
 
     const CHANNEL_DEFAULT = 'default';

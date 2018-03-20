@@ -26,6 +26,7 @@ class ProductController extends Controller
             'shop' => array(), 
             'code' => array(),
             'name' => array(),
+            'year' => array(),
             'channel' => array(),
             'spec_size' => array(),
         ), $cond);
@@ -60,6 +61,7 @@ class ProductController extends Controller
 
             'cond_auto_shops' => DB::table('product')->select('shop')->distinct('shop')->pluck('shop'),
             'cond_auto_codes' => DB::table('product')->select('code')->distinct('code')->pluck('code'), 
+            'cond_auto_years' => DB::table('product')->select('year')->distinct('year')->pluck('year'),
             'cond_auto_names' => DB::table('product')->select('name')->distinct('name')->pluck('name'),  
             'cond_auto_channels' => array(
                 \App\Product::CHANNEL_DEFAULT => '默认',
@@ -94,6 +96,7 @@ class ProductController extends Controller
         $cond = array_merge(array(
             'type' => array(), 
             'shop' => array(), 
+            'year' => array(), 
             'code' => array(),
             'name' => array(),
             'channel' => array(),
@@ -145,6 +148,7 @@ class ProductController extends Controller
                 \App\ProductInout::TYPE_SALEOUT => '销售出货'
             ),
             'cond_auto_shops' => DB::table('product')->select('shop')->distinct('shop')->pluck('shop'),
+            'cond_auto_years' => DB::table('product')->select('year')->distinct('year')->pluck('year'),
             'cond_auto_codes' => DB::table('product')->select('code')->distinct('code')->pluck('code'), 
             'cond_auto_names' => DB::table('product')->select('name')->distinct('name')->pluck('name'),  
             'cond_auto_channels' => array(
@@ -158,49 +162,81 @@ class ProductController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'products.coat' => [new ProductImportFile()],
-            'products.trousers' => [new ProductImportFile()],
-            'products.shoes' => [new ProductImportFile()],
+            'file.coat' => [new ProductImportFile()],
+            'file.trousers' => [new ProductImportFile()],
+            'file.shoes' => [new ProductImportFile()],
         ]);
-        
-        if ($request->hasFile('products')){
+
+        if ($request->hasFile('file')){
             $inout_key = ProductInout::genInoutkey();
             
-            if ($request->hasFile('products.coat') && $request->file('products.coat')->isValid()) {
-                $path = $request->file('products.coat')->path();
+            $importResultCoat = true;
+            $errorCoat = '';
+            if ($request->hasFile('file.coat') && $request->file('file.coat')->isValid()) {
+                $path = $request->file('file.coat')->path();
+
+                $importType = $request->input('type.coat');
                 
-                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+                $clientExt = $request->file('file.coat')->getClientOriginalExtension();
+                if($clientExt == 'xls'){
+                    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+                }else if($clientExt == 'xlsx'){
+                    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+                }
                 $spreadsheet = $reader->load($path);
                 $activesheet = $spreadsheet->getActiveSheet();
                 
                 $data = ProductInout::formatImportFileData($activesheet, 'coat');
-                $importResult = ProductInout::importCoat($data, $inout_key, $error);
+                $importResultCoat = ProductInout::importCoat($data, $importType, $inout_key, $errorCoat);
             }
+
+            $importResultTrousers = true;
+            $errorTrousers = '';
+            if ($request->hasFile('file.trousers') && $request->file('file.trousers')->isValid()) {
+                $path = $request->file('file.trousers')->path();
             
-            if ($request->hasFile('products.trousers') && $request->file('products.trousers')->isValid()) {
-                $path = $request->file('products.trousers')->path();
-            
-                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+                $importType = $request->input('type.trousers');
+                
+                $clientExt = $request->file('file.trousers')->getClientOriginalExtension();
+                if($clientExt == 'xls'){
+                    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+                }else if($clientExt == 'xlsx'){
+                    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+                }
                 $spreadsheet = $reader->load($path);
                 $activesheet = $spreadsheet->getActiveSheet();
             
                 $data = ProductInout::formatImportFileData($activesheet, 'trousers');
-                $importResult = ProductInout::importTrousers($data, $inout_key, $error);
+                $importResultTrousers = ProductInout::importTrousers($data, $importType, $inout_key, $errorTrousers);
             }
+
+            $importResultShoes = true;
+            $errorShoes = '';
+            if ($request->hasFile('file.shoes') && $request->file('file.shoes')->isValid()) {
+                $path = $request->file('file.shoes')->path();
+                
+                $importType = $request->input('type.shoes');
             
-            if ($request->hasFile('products.shoes') && $request->file('products.shoes')->isValid()) {
-                $path = $request->file('products.shoes')->path();
-            
-                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+                $clientExt = $request->file('file.shoes')->getClientOriginalExtension();
+                if($clientExt == 'xls'){
+                    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+                }else if($clientExt == 'xlsx'){
+                    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+                }
                 $spreadsheet = $reader->load($path);
                 $activesheet = $spreadsheet->getActiveSheet();
             
                 $data = ProductInout::formatImportFileData($activesheet, 'shoes');
-                $importResult = ProductInout::importShoes($data, $inout_key, $error);
+                $importResultShoes = ProductInout::importShoes($data, $importType, $inout_key, $errorShoes);
             }
             
-            $request->session()->flash('import_status', '导入成功');
-            // success redirect
+            if($importResultCoat && $importResultTrousers && $importResultShoes){
+                $request->session()->flash('import_status', '导入成功');
+                // success redirect
+            }else{
+                $request->session()->flash('import_status', $errorCoat . "||" . $errorTrousers . '||' . $errorShoes);
+            }
+            
         }
         
         

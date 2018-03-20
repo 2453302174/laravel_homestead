@@ -15,6 +15,35 @@
     <link href="{{ asset('jqwidgets/styles/jqx.base.css') }}" rel="stylesheet">
     <link href="{{ asset('jqwidgets/styles/jqx.office.css') }}" rel="stylesheet">
     <style>
+        .fadetoggle {
+        	padding: 10px;
+        	overflow: visible;
+        	position: relative;
+        	box-shadow: 4px 2px 2px #aab;
+        }
+        .fadetoggle.out {
+        	height: 0;
+        }
+        .fadetoggle.out * {
+        	display: none;
+        }        
+        .fadetoggle.out .fadetoggle-btn {
+        	display: block;
+        }        
+        .fadetoggle .fadetoggle-btn {
+        	font-size: 12px;
+        	font-style: italic;
+        	padding: 5px 10px;        	
+        	position: absolute;
+        	right: 0;
+        	bottom: -20px;
+        	height: 30px;
+        	line-height: 20ox;
+        	display: block;
+        	background-color: #FFF;
+        	box-shadow: 4px 2px 2px #aab;        	
+        }
+
         .combo-func1 {
         	margin-bottom: 10px;
         }
@@ -139,6 +168,9 @@
         $('form.forbidden .submit-btn').on('click', function(){
             $(this).parents('form').removeClass('forbidden').submit();
     	});
+    	$('.fadetoggle .fadetoggle-btn').on('click', function(){
+			$(this).parents('.fadetoggle').toggleClass('out');
+        });
 	});
     </script>
     @section('pageend')
