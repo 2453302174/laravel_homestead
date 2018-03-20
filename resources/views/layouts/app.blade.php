@@ -58,6 +58,7 @@
         table.tbs1 th{
         	font-size: 14px;
         	color: #254;
+        	background-color: #fff;
         }
         table.tbs1 td{
         	font-size: 12px;
