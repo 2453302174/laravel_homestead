@@ -162,7 +162,7 @@ class ProductController extends Controller
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
         
         header("Content-type:application/vnd.ms-excel");
-        header("Content-Disposition:filename=1.xlsx");
+        header("Content-Disposition:filename=data.".date('YmdHis').".xlsx");
         
         $writer->save("php://output");
     }
