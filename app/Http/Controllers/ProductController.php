@@ -73,6 +73,100 @@ class ProductController extends Controller
         ]);
     }
     
+    
+    public function exportexcel(Request $request)
+    {
+        $cond = $request->input('cond', array());
+        $cond = array_merge(array(
+            'brand' => array(),
+            'shop' => array(),
+            'code' => array(),
+            'name' => array(),
+            'year' => array(),
+            'channel' => array(),
+            'spec_size' => array(),
+        ), $cond);
+        if(!empty($cond)){
+            $whereStr = array();
+            $whereParams = array();
+            foreach($cond as $k => $values){
+                if(!empty($values)){
+                    $whereStr[] = "(product.{$k} IN ('". implode("', '", $values) ."') )";
+                }
+            }
+            $whereStr = implode(' and ', $whereStr);
+        }
+        if(empty($whereStr)){
+            $products = \App\Product::orderBy('createtime', 'desc')->get();
+        }else{
+            $products = \App\Product::orderBy('createtime', 'desc')
+            ->whereRaw($whereStr)
+            ->get();
+        }
+    
+        $productsChunk = array();
+        foreach($products as $product){
+            $productsChunk[$product->code]['name'] = $product->name;
+            $productsChunk[$product->code]['code'] = $product->code;
+            $productsChunk[$product->code]['records'][] = $product;
+        }
+        
+        
+        $data = array(
+            ['商品代码', '商品名称', '年份', '所在门店', '品牌', '渠道', '尺码', '库存余量', '单价', '库存总额', '入库时间']
+        );
+        $remain_num_sum = 0;
+        $remain_amount = 0;
+        foreach($productsChunk as $code => $details){
+            foreach ($details['records'] as $k => $product){
+                $remain_num_sum += $product->remain_num;
+                $remain_amount += $product->price * $product->remain_num;
+                
+                $row = [];
+                $row[] = $details['code'];
+                $row[] = $details['name'];
+                $row[] = $product->year;
+                $row[] = $product->shop;
+                $row[] = $product->brand;
+                $row[] = $product->getChanneltxt();
+                $row[] = $product->spec_size;
+                $row[] = $product->remain_num;
+                $row[] = $product->price;
+                $row[] = $product->price * $product->remain_num;
+                $row[] = $product->createtime;
+                
+                
+                $data[] = $row;
+            }
+        }
+
+        $data[] = [
+            '小计', 
+            '', 
+            '', 
+            '', 
+            '', 
+            '', 
+            $remain_num_sum, 
+            '', 
+            $remain_amount, 
+            '', 
+            '', 
+        ];
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $activesheet = $spreadsheet->getActiveSheet();
+        $activesheet->setTitle('导出数据');
+        $activesheet->fromArray($data);
+        
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
+        
+        header("Content-type:application/vnd.ms-excel");
+        header("Content-Disposition:filename=1.xlsx");
+        
+        $writer->save("php://output");
+    }
+    
     public function inoutadjust(Request $request)
     {
         $this->validate($request, [

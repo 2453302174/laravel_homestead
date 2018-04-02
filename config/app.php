@@ -1,5 +1,6 @@
 <?php
 
+use NunoMaduro\Collision\Provider;
 return [
 
     /*
@@ -162,6 +163,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        //Dev Providers
+
     ],
 
     /*
@@ -213,6 +216,7 @@ return [
         
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
+        
 
     ],
 

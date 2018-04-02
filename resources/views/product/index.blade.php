@@ -17,6 +17,8 @@
                 <div class="card-header">当前库存</div>
 
                 <div class="card-body">
+                    <form id="pexcel-form" action="{{ route('exportexcelp') }}" method="GET" target="__blank"></form>
+                
                     <form class="forbidden fadetoggle" action="{{ route('product') }}" method="GET" style="position: sticky; top: 0; z-index: 99; background-color: #FFF;">
                         <div class="row">
                             <div class="col">
@@ -48,6 +50,7 @@
                             </div>
                             <div class="col">
                                 <button type="button" class="submit-btn btn btn-primary mb-2">筛选记录</button>
+                                <button id="export-excel-btn" type="button" class="btn btn-primary mb-2">导出成excel</button>
                             </div>
                         </div>
                         
@@ -101,7 +104,7 @@
                                                 <input value="{{ old('inoutp.' . $product->id_product . '.value') }}" type="text" class="form-control{{ $errors->has('inoutp.' . $product->id_product) ? ' is-invalid' : '' }}" name="inoutp[{{ $product->id_product }}][value]" />
                                                 <div class="input-group-append">
                                                     {{
-                                                        Form::select(
+                                                        \Collective\Html\FormFacade::select(
                                                             'inoutp[' . $product->id_product . '][type]',
                                                             [
                                                                 '' => '请选择', 
@@ -252,9 +255,16 @@
 			$.each(items, function(k, item){
 				var name = thisObj.attr('combo-name');
 				thisObj.append('<input type="hidden" class="selectedvalue" name="cond['+name+'][]" value="'+item.value+'" />');
+				$('#pexcel-form').append('<input type="hidden" class="selectedvalue" name="cond['+name+'][]" value="'+item.value+'" />');
 			});
 		});
 		$('.combo-func1').change();
+
+
+		$('#export-excel-btn').on('click', function(){
+			$('#pexcel-form').submit();
+			return false;
+		});
 	});
 </script>
 @parent
