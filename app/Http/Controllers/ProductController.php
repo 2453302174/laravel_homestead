@@ -147,10 +147,10 @@ class ProductController extends Controller
             '', 
             '', 
             '', 
+            '', 
             $remain_num_sum, 
             '', 
             $remain_amount, 
-            '', 
             '', 
         ];
 
@@ -162,7 +162,7 @@ class ProductController extends Controller
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
         
         header("Content-type:application/vnd.ms-excel");
-        header("Content-Disposition:filename=data.".date('YmdHis').".xlsx");
+        header("Content-Disposition:filename=data.".date('').".xlsx");
         
         $writer->save("php://output");
     }
