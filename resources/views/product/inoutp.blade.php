@@ -45,13 +45,17 @@
                             <div class="col">
                                 <div class="productbrand combo-func1" combo-name="brand"></div>
                             </div>
-                            <div class="col"></div>
-                        </div>
-                        <div class="row">
                             <div class="col">
                                 <input class="form-control" type="text" name="cond[pageSize]" value="{{ $cond['pageSize'] }}" />
                             </div>
-                            <div class="col"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="datestart jqxdate" date-initvalue="{{ $cond['date_start'] }}" date-name="date_start"></div>
+                            </div>
+                            <div class="col">
+                                <div class="dateend jqxdate" date-initvalue="{{ $cond['date_end'] }}" date-name="date_end"></div>
+                            </div>
                             <div class="col">
                                 <button type="submit" class="btn btn-primary mb-2">筛选记录</button>
                             </div>
@@ -203,6 +207,34 @@
 			});
 		});
 		$('.combo-func1').change();
+
+		$('.jqxdate.datestart').jqxDateTimeInput({
+			formatString: "yyyy-MM-dd", 
+			value: "{{ $cond['date_start'] }}"
+		});
+		$('.jqxdate.dateend').jqxDateTimeInput({
+			formatString: "yyyy-MM-dd", 
+			value: "{{ $cond['date_end'] }}"
+		});
+		$('.jqxdate').on('change', function(e){
+			var thisObj = $(this);
+			thisObj.children('.jqxdatevalue').remove();
+			var name = thisObj.attr('date-name');
+
+			if(typeof(e.args) == 'undefined'){
+				var jsDate = thisObj.attr('date-initvalue');
+			}else{
+    			var month = e.args.date.getUTCMonth()*1 + 1;
+    			month = month < 10? '0' + month : month;
+    			var day = e.args.date.getUTCDate();
+    			day = day < 10? '0' + day : day;
+    			
+    			var jsDate = e.args.date.getUTCFullYear() + '-' + month + '-' + day;
+			}
+			thisObj.append('<input type="hidden" class="jqxdatevalue" name="cond['+name+']" value="'+jsDate+'" />');
+			$('#pexcel-form').append('<input type="hidden" class="jqxdatevalue" name="cond['+name+']" value="'+jsDate+'" />');
+		});
+		$('.jqxdate').change();
 	});
 </script>
 @parent

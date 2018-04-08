@@ -159,6 +159,9 @@
     <script src="{{ asset('jqwidgets/jqxscrollbar.js') }}"></script>
     <script src="{{ asset('jqwidgets/jqxlistbox.js') }}"></script>
     <script src="{{ asset('jqwidgets/jqxcombobox.js') }}"></script>
+    <script src="{{ asset('jqwidgets/jqxdatetimeinput.js') }}"></script>
+    <script src="{{ asset('jqwidgets/jqxcalendar.js') }}"></script>
+    <script src="{{ asset('jqwidgets/globalization/globalize.js') }}"></script>
     
     <script>
     $(document).ready(function(){

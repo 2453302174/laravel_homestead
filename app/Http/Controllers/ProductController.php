@@ -30,6 +30,8 @@ class ProductController extends Controller
             'year' => array(),
             'channel' => array(),
             'spec_size' => array(), 
+            'date_start' => date('Y-m-d', strtotime('-7 days')), 
+            'date_end' => date('Y-m-d'), 
             'pageSize' => 100
         ), $cond);
         if(!empty($cond)){
@@ -38,7 +40,13 @@ class ProductController extends Controller
             foreach($cond as $k => $values){
                 if($k != 'pageSize'){
                     if(!empty($values)){
-                        $whereStr[] = "(product.{$k} IN ('". implode("', '", $values) ."') )";
+                        if($k == 'date_start'){
+                            $whereStr[] = "(product.createtime >= '{$values}' )";
+                        }elseif($k == 'date_end'){
+                            $whereStr[] = "(product.createtime <= '{$values} 23:59:59' )";
+                        }else{
+                            $whereStr[] = "(product.{$k} IN ('". implode("', '", $values) ."') )";
+                        }
                     }
                 }
             }
@@ -202,6 +210,8 @@ class ProductController extends Controller
             'name' => array(),
             'channel' => array(),
             'spec_size' => array(),
+            'date_start' => date('Y-m-d', strtotime('-7 days')), 
+            'date_end' => date('Y-m-d'), 
             'pageSize' => 100
         ), $cond);
         if(!empty($cond)){
@@ -210,7 +220,11 @@ class ProductController extends Controller
             foreach($cond as $k => $values){
                 if(!empty($values)){
                     if($k != 'pageSize'){
-                        if(in_array($k, array('type'))){
+                        if($k == 'date_start'){
+                            $whereStr[] = "(product_inout.createtime >= '{$values}' )";
+                        }elseif($k == 'date_end'){
+                            $whereStr[] = "(product_inout.createtime <= '{$values} 23:59:59' )";
+                        }elseif(in_array($k, array('type'))){
                             $whereStr[] = "(product_inout.{$k} IN ('". implode("', '", $values) ."') )";
                         }else{
                             $whereStr[] = "(product.{$k} IN ('". implode("', '", $values) ."') )";
