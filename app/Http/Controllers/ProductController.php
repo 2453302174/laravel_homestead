@@ -29,24 +29,27 @@ class ProductController extends Controller
             'name' => array(),
             'year' => array(),
             'channel' => array(),
-            'spec_size' => array(),
+            'spec_size' => array(), 
+            'pageSize' => 100
         ), $cond);
         if(!empty($cond)){
             $whereStr = array();
             $whereParams = array();
             foreach($cond as $k => $values){
-                if(!empty($values)){
-                    $whereStr[] = "(product.{$k} IN ('". implode("', '", $values) ."') )";
+                if($k != 'pageSize'){
+                    if(!empty($values)){
+                        $whereStr[] = "(product.{$k} IN ('". implode("', '", $values) ."') )";
+                    }
                 }
             }
             $whereStr = implode(' and ', $whereStr);
         }
         if(empty($whereStr)){
-            $products = \App\Product::orderBy('createtime', 'desc')->get();
+            $products = \App\Product::orderBy('createtime', 'desc')->paginate($cond['pageSize']);
         }else{
             $products = \App\Product::orderBy('createtime', 'desc')
             ->whereRaw($whereStr)
-            ->get();
+            ->paginate($cond['pageSize']);
         }
         
         $productsChunk = array();
@@ -57,6 +60,7 @@ class ProductController extends Controller
         }
         
         return view('product/index', [
+            'products' => $products, 
             'productsChunk' => $productsChunk, 
             'cond' => $cond, 
 
@@ -198,29 +202,32 @@ class ProductController extends Controller
             'name' => array(),
             'channel' => array(),
             'spec_size' => array(),
+            'pageSize' => 100
         ), $cond);
         if(!empty($cond)){
             $whereStr = array();
             $whereParams = array();
             foreach($cond as $k => $values){
                 if(!empty($values)){
-                    if(in_array($k, array('type'))){
-                        $whereStr[] = "(product_inout.{$k} IN ('". implode("', '", $values) ."') )";
-                    }else{
-                        $whereStr[] = "(product.{$k} IN ('". implode("', '", $values) ."') )";
+                    if($k != 'pageSize'){
+                        if(in_array($k, array('type'))){
+                            $whereStr[] = "(product_inout.{$k} IN ('". implode("', '", $values) ."') )";
+                        }else{
+                            $whereStr[] = "(product.{$k} IN ('". implode("', '", $values) ."') )";
+                        }
                     }
                 }
             }
             $whereStr = implode(' and ', $whereStr);
         }
         if(empty($whereStr)){
-            $productInouts = \App\ProductInout::orderBy('createtime', 'desc')->get();
+            $productInouts = \App\ProductInout::orderBy('createtime', 'desc')->paginate($cond['pageSize']);
         }else{
             $productInouts = \App\ProductInout::select('product_inout.*')
             ->leftJoin('product', 'product.id_product', '=', 'product_inout.id_product')
             ->orderBy('product_inout.createtime', 'desc')
             ->whereRaw($whereStr, $whereParams)
-            ->get();
+            ->paginate($cond['pageSize']);
         }
         
         $productInoutsChunk = array();
@@ -231,6 +238,7 @@ class ProductController extends Controller
         }
         
         return view('product/inoutp', [
+            'productInouts' => $productInouts, 
             'productInoutsChunk' => $productInoutsChunk, 
             'cond' => $cond, 
 

@@ -45,6 +45,13 @@
                             <div class="col">
                                 <div class="productbrand combo-func1" combo-name="brand"></div>
                             </div>
+                            <div class="col"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <input class="form-control" type="text" name="cond[pageSize]" value="{{ $cond['pageSize'] }}" />
+                            </div>
+                            <div class="col"></div>
                             <div class="col">
                                 <button type="submit" class="btn btn-primary mb-2">筛选记录</button>
                             </div>
@@ -92,6 +99,8 @@
                             @endforeach
                         @endforeach
                     </table>
+                    
+                    {{ $productInouts->links() }}
                 </div>
             </div>
         </div>
