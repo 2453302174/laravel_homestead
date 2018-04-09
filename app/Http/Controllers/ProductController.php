@@ -97,13 +97,21 @@ class ProductController extends Controller
             'year' => array(),
             'channel' => array(),
             'spec_size' => array(),
+            'date_start' => date('Y-m-d', strtotime('-7 days')), 
+            'date_end' => date('Y-m-d'), 
         ), $cond);
         if(!empty($cond)){
             $whereStr = array();
             $whereParams = array();
             foreach($cond as $k => $values){
                 if(!empty($values)){
-                    $whereStr[] = "(product.{$k} IN ('". implode("', '", $values) ."') )";
+                    if($k == 'date_start'){
+                        $whereStr[] = "(product.createtime >= '{$values}' )";
+                    }elseif($k == 'date_end'){
+                        $whereStr[] = "(product.createtime <= '{$values} 23:59:59' )";
+                    }else{
+                        $whereStr[] = "(product.{$k} IN ('". implode("', '", $values) ."') )";
+                    }
                 }
             }
             $whereStr = implode(' and ', $whereStr);
